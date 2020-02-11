@@ -1,0 +1,10 @@
+pi_tup = (3, 1, 4, 1, 5, 9)
+pi_list = list(pi_tup)
+print(pi_tup.index(9))
+print(pi_tup.count(1))
+print(pi_tup[2])
+L = [1, 2, 3]
+L = tuple(L)
+print(L)
+z = len(pi_tup) + min(pi_tup) + max(pi_tup)
+print(z)
