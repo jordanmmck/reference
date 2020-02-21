@@ -23,3 +23,6 @@ L.pop()
 L.discard(1)
 
 print(set('abcde') == set('edcba'))
+
+# set comprehension
+P = {n**2 for n in range(10)}

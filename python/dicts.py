@@ -8,3 +8,6 @@ vals = d.values()
 
 # iterator of key-value tuples
 key_val_pairs = d.items()
+
+# comprehensions
+d = {n: n**2 for n in range(5)}
