@@ -2,8 +2,8 @@ class Animal:
     # these are private
     __name = None
     __sound = None
-    # constructor
 
+    # constructor
     def __init__(self, name, sound):
         self.__name = name
         self.__sound = sound
@@ -20,10 +20,3 @@ class Animal:
 
 cat = Animal('Kitty', 'Meeow')
 print(cat.get_name())
-
-
-def addNums(n1, n2):
-    return n1 + n2
-
-
-print(addNums(1, 2))
