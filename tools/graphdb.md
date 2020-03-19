@@ -169,3 +169,66 @@ graph.io(graphml()).readGraph('/Users/jordan/Development/graph/sample-data/air-r
 g=graph.traversal()
 :set max-iteration 1000
 ```
+
+## Gremlin python
+
+```python
+nodes = g.V(source_id).outE().hasLabel(relationship).inV().has( 'admin_flagged', False).has('flagged_count', inside(0, FLAG_COUNT_THRESHOLD)).as_('v').select('v').fold().next()
+```
+
+Imports:
+
+```python
+from chalice import Chalice
+from gremlin_python import statics
+from gremlin_python.structure.graph import Graph
+from gremlin_python.process.graph_traversal import __
+from gremlin_python.process.strategies import *
+from gremlin_python.process.traversal import T, P, Operator, Cardinality
+```
+
+CORS
+
+```python
+@admin.route('/status', methods=['GET'], cors=True)
+def status():
+    try:
+        graph.g.V().limit(0).fold().next()
+    except ConnectionRefusedError as e:
+        raise ChaliceViewError(e)
+    return {'status': 'OK'}
+```
+
+Manual auth
+
+```python
+def decode_and_verify_token(token):
+    headers = jwt.get_unverified_headers(token)
+    kid = headers['kid']
+
+    key_index = -1
+    for i in range(len(cognito_keys)):
+        if kid == cognito_keys[i]['kid']:
+            key_index = i
+            break
+    if key_index == -1:
+        raise BadRequestError('Public key not found in jwks.json')
+
+    public_key = jwk.construct(cognito_keys[key_index])
+    message, encoded_signature = str(token).rsplit('.', 1)
+    decoded_signature = base64url_decode(encoded_signature.encode('utf-8'))
+
+    if not public_key.verify(message.encode("utf8"), decoded_signature):
+        raise BadRequestError('Signature verification failed')
+
+    app_client_id = os.environ.get('APP_CLIENT_ID')
+    claims = jwt.get_unverified_claims(token)
+    # additionally we can verify the token expiration
+    if time.time() > claims['exp']:
+        raise BadRequestError('Token expired')
+    # and the Audience (use claims['client_id'] if verifying an access token)
+    if claims['aud'] != app_client_id:
+        raise BadRequestError('Token was not issued for this audience')
+
+    return claims
+```
